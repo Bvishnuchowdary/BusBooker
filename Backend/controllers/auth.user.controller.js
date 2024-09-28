@@ -2,59 +2,66 @@ import User from "../models/user.models.js"
 import bcrypt from 'bcryptjs'
 import generateTokenandsetCookie from "../utils/generateToken.js";
 //SIGNUP
-export const signup = async (req,res)=>{
+export const signup = async (req, res) => {
     try {
-        const {username,email,password,confirmpassword,phone,gender} = req.body;
+        const { username, email, password, confirmpassword, phone, gender } = req.body;
 
-        if(password!=confirmpassword){
-            res.status(400).json({error:"password and confirm password donnot match"})
-        }
-
-        var user = await User.findOne({username})
-        if(user){
-            res.status(400).json({error:"Entered username already exists"})
-        }
-        user = await User.findOne({email})
-        if(user){
-            res.status(400).json({error:"Entered email already exists"})
-        }
-        user = await User.findOne({phone})
-        if(user){
-            res.status(400).json({error:"Entered phonenumber already exists"})
+        // Check if password and confirm password match
+        if (password !== confirmpassword) {
+            return res.status(400).json({ error: "Password and confirm password do not match" });
         }
 
-        //password is encrypted here
+        // Check if username already exists
+        let user = await User.findOne({ username });
+        if (user) {
+            return res.status(400).json({ error: "Entered username already exists" });
+        }
+
+        // Check if email already exists
+        user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ error: "Entered email already exists" });
+        }
+
+        // Check if phone number already exists
+        user = await User.findOne({ phone });
+        if (user) {
+            return res.status(400).json({ error: "Entered phone number already exists" });
+        }
+
+        // Encrypt password
         const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(password,salt)
+        const hashedpassword = await bcrypt.hash(password, salt);
 
-        const newuser = new User({
-            username:username,
-            email:email,
-            password:hashedpassword,
-            phone: phone,
-            isAdmin:false,
-            gender:gender,
-        })
+        // Create new user instance
+        const newUser = new User({
+            username,
+            email,
+            password: hashedpassword,
+            phone,
+            isAdmin: false,
+            gender,
+        });
 
-        if(newuser){
-            generateTokenandsetCookie(newuser._id,res)
-            await newuser.save();
+        // Save user to database
+        await newUser.save();
 
-            res.status(201).json({
-                _id:newuser.id,
-                username:newuser.username,
-                gender:newuser.gender,
-                phone:newuser.phone,
-            })
-        }
-        else{
-            res.status(400).json({error:"Invalid details"})
-        }
+        // Generate token and set cookie
+        generateTokenandsetCookie(newUser._id, res); // Ensure this function only sets cookies, doesn't send response
+
+        // Respond with user data
+        return res.status(201).json({
+            _id: newUser.id,
+            username: newUser.username,
+            gender: newUser.gender,
+            phone: newUser.phone,
+        });
 
     } catch (error) {
-        console.log("Error occured inside the signup page",error)
+        console.error("Error occurred inside the signup page", error);
+        return res.status(500).json({ error: "Server error" });
     }
-}
+};
 
 
 //LOGIN 

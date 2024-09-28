@@ -5,6 +5,6 @@ import { newschedule ,fetchschedules} from '../controllers/schedule.controller.j
 const router = express.Router()
 
 router.post("/add",protectroute,newschedule)
-router.get("/fetch",protectroute,fetchschedules)
+router.post("/fetch",protectroute,fetchschedules)
 
 export default router

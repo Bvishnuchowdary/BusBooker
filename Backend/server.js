@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import authRoutes from './Routes/auth.routes.js'
 import connectToDatabase from './db/connectTomongoDB.js'
 import routesRoutes from './Routes/location.routes.js'
@@ -13,6 +14,11 @@ dotenv.config()
 const app= express()
 app.use(express.json())
 app.use(cookieParser())
+const corsOptions = {
+    origin: 'http://localhost:5173', // your frontend's origin
+    credentials: true,               // allow credentials (cookies, authorization headers, etc.)
+  };
+app.use(cors(corsOptions))
 
 const PORT = 5000
 
