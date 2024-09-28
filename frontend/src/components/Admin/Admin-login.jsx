@@ -3,7 +3,7 @@ import { FaBus } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-const Login = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
@@ -17,17 +17,11 @@ const Login = () => {
     }
 
     try {
-      const url = 'http://localhost:5000/api/auth/user/login';
+      const url = 'http://localhost:5000/api/auth/admin/login';
       const response = await axios.post(url, { email, password }, { withCredentials: true });
 
       if (response.status === 201) {
-        
-        if(response.data.isadmin===true){
-          navigate('/admin-dashboard');
-        }else{
-          navigate('/dashboard');
-        }
-        
+        navigate('/admin-dashboard');
       } else {
         alert("Invalid credentials");
       }
@@ -103,4 +97,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
