@@ -77,10 +77,7 @@ export const login = async (req,res)=>{
         if(!ispasswordvalid){
             return res.status(400).json({ error: "password is incorrect" });
         }
-        if(user.isAdmin){
-            return res.status(400).json({ error: "Invalid user credentials" });
-        }
-
+        
         generateTokenandsetCookie(user._id,res)
         console.log("user login successful")
         res.status(201).json({
@@ -88,7 +85,8 @@ export const login = async (req,res)=>{
             username:user.username,
             gender:user.gender,
             phone:user.phone,
-            message:"user login successful"
+            message:"user login successful",
+            isadmin:user.isAdmin
         })
         
     } catch (error) {
@@ -100,6 +98,7 @@ export const login = async (req,res)=>{
 export const logout = (req,res)=>{
     try {
         res.cookie("jwt","",{maxAge:0})
+        console.log("user logged out")
         res.status(200).json({message:"Loggedout successfully"})
     } catch (error) {
         console.log("Error occured inside the Logout page",error)

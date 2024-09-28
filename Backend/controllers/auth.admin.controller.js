@@ -81,7 +81,8 @@ export const Alogin = async (req,res)=>{
             username:user.username,
             gender:user.gender,
             phone:user.phone,
-            message:"user login successful"
+            message:"user login successful",
+            isadmin:true
         })
         
     } catch (error) {

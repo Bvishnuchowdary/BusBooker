@@ -42,3 +42,14 @@ export const fetchroutes = async (req,res)=>{
         res.status(500).json({ error: "An error occurred while fetching the route" });
     }
 }
+
+
+export const fetchroutesWithSourceAndDest = async (req,res)=>{
+  try {
+      const routes = await Route.find()
+      res.status(200).json(routes);
+    } catch (error) {
+      console.error("Error inside the fetchroutes function", error);
+      res.status(500).json({ error: "An error occurred while fetching the route" });
+  }
+}
