@@ -86,3 +86,29 @@ export const fetchschedules = async (req, res) => {
     res.status(500).json({ error: "An error occurred while fetching the schedule" });
   }
 };
+
+export const fetchAllSchedules = async (req, res) => {
+  try {
+  
+    // Find the route by source and destination
+    const route = await Route.findOne({ source, destination });
+    if (!route) {
+      return res.status(400).json({ error: "Route does not exist between provided source and destination" });
+    }
+
+    // Find schedules for the given route
+    const schedules = await Schedule.find({ route: route._id }).populate('bus route');
+    if (!schedules.length) {
+      return res.status(404).json({ error: "No schedules exist for the provided source and destination" });
+    }
+
+    // Return the found schedules
+    return res.status(200).json({ message: "Schedules fetched successfully", schedules });
+
+  } catch (error) {
+    console.error("Error occurred inside the fetchschedules controller:", error);
+    res.status(500).json({ error: "An error occurred while fetching the schedule" });
+  }
+};
+
+
